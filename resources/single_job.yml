@@ -1,0 +1,71 @@
+resources:
+  jobs:
+    liquid_clustering_monitor: # Job ID
+
+      name: liquid_clustering_monitor # Job Name
+
+      job_clusters: # Cluster name where the job runs
+
+        - job_cluster_key: lc_cluster # A new cluster is created, job is executed and cluster terminates
+
+          new_cluster:  # Everytime a job is ran, a new cluster is created and the job is ran.
+            spark_version: 15.4.x-scala2.12 # For Production jobs I prefer spark_version: 15.4.x-scala2.12
+            node_type_id: Standard_DS3_v2 # Azure VM Size or Type. Use the best for Versant Media as the data is huge.
+            num_workers: 2 # We have 1 Driver + 2 Worker Nodes, so totally 3 machines for doing this job.
+
+      tasks:
+
+        - task_key: analyze_liquid_clustering # Task Definition
+
+          notebook_task:
+            notebook_path: ../notebooks/liquid_clustering/liquid_clustering_analysis
+
+          job_cluster_key: lc_cluster
+
+      schedule:
+        quartz_cron_expression: "0 0 2 * * ?"
+        timezone_id: "UTC"
+
+    pipelines:
+
+    dashboards:
+
+
+################################################################################################
+
+#Scheduler Trigger
+       ↓
+#Create Cluster
+       ↓
+#Run Notebook
+       ↓
+#Collect Logs
+       ↓
+#Store Results
+       ↓
+#Terminate Cluster
+
+################################################################################################
+
+
+################################################################################################
+
+#PyCharm
+   ↓
+#GitHub Repository
+   ↓
+#GitHub Actions
+   ↓
+#Databricks Asset Bundle Deploy
+   ↓
+#Databricks Workspace
+#   ├── Jobs
+#   ├── DLT Pipelines
+#   ├── Alerts
+#   └── Dashboards
+            ↓
+#Databricks Scheduler
+            ↓
+#Automatic Execution
+
+################################################################################################

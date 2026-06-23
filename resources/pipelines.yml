@@ -1,32 +1,37 @@
-bundle:
-  name: customer-360-databricks
+resources:
+  pipelines:
 
-include:
-  - resources/*.yml
+    platform_observability_pipeline: #Pipeline ID
 
-variables:
-  catalog:
-    description: Unity Catalog name
+      name: platform_observability_pipeline # Pipeline Name
 
-  schema:
-    description: Schema name
+      catalog: ${var.catalog}  # Value of Catalog coming from databricks.yml
 
-targets:
-  dev:
-    mode: development
-    default: true
+      schema: ${var.schema} # Value of Schema coming from databricks.yml
 
-    workspace:
-      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+      serverless: true
 
-  qa:
-    mode: production
+      continuous: false  # Batch vs Streaming
 
-    workspace:
-      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+      channel: CURRENT
 
-  prod:
-    mode: production
+      libraries:
 
-    workspace:
-      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+        - notebook:
+            path: ../dlt/platform_observability_pipeline.py
+
+      configuration:
+
+        source_catalog: ${var.catalog}
+        source_schema: ${var.schema}
+
+
+
+    liquid_clustering_pipeline:
+
+    predictive_optimization_pipeline:
+
+    dlt_health_pipeline:
+
+    governance_pipeline:
+

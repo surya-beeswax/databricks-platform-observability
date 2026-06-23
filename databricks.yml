@@ -19,14 +19,26 @@ targets:
     workspace:
       host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
 
+    variables:
+      catalog: dev
+      schema: observability
+
   qa:
     mode: production
 
     workspace:
       host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
 
+    variables:
+      catalog: qa
+      schema: observability
+
   prod:
     mode: production
 
     workspace:
       host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+
+    variables:
+      catalog: prod
+      schema: observability

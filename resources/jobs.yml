@@ -1,32 +1,60 @@
-bundle:
-  name: customer-360-databricks
+resources:
+  jobs:
 
-include:
-  - resources/*.yml
+    platform_observability_job:
 
-variables:
-  catalog:
-    description: Unity Catalog name
+      name: platform_observability_job
 
-  schema:
-    description: Schema name
+      job_clusters:
 
-targets:
-  dev:
-    mode: development
-    default: true
+        - job_cluster_key: observability_cluster
 
-    workspace:
-      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+          new_cluster:
+            spark_version: 15.4.x-scala2.12
+            node_type_id: Standard_DS3_v2
+            num_workers: 2
 
-  qa:
-    mode: production
+      tasks:
 
-    workspace:
-      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+        - task_key: liquid_clustering_analysis
 
-  prod:
-    mode: production
+          notebook_task:
+            notebook_path: ../notebooks/liquid_clustering/liquid_clustering_analysis
 
-    workspace:
-      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+          job_cluster_key: observability_cluster
+
+        - task_key: predictive_optimization_analysis
+
+          depends_on:
+            - task_key: liquid_clustering_analysis
+
+          notebook_task:
+            notebook_path: ../notebooks/predictive_optimization/predictive_optimization_analysis
+
+          job_cluster_key: observability_cluster
+
+        - task_key: dlt_pipeline_analysis
+
+          depends_on:
+            - task_key: predictive_optimization_analysis
+
+          notebook_task:
+            notebook_path: ../notebooks/dlt/dlt_pipeline_analysis
+
+          job_cluster_key: observability_cluster
+
+        - task_key: unity_catalog_governance
+
+          depends_on:
+            - task_key: dlt_pipeline_analysis
+
+          notebook_task:
+            notebook_path: ../notebooks/governance/unity_catalog_governance
+
+          job_cluster_key: observability_cluster
+
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: "UTC"
+
+      max_concurrent_runs: 1
