@@ -1,1 +1,32 @@
-print('This is Surya working in Mediamint')
+bundle:
+  name: customer-360-databricks
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog name
+
+  schema:
+    description: Schema name
+
+targets:
+  dev:
+    mode: development
+    default: true
+
+    workspace:
+      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+
+  qa:
+    mode: production
+
+    workspace:
+      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
+
+  prod:
+    mode: production
+
+    workspace:
+      host: https://dbc-7256e718-eb7d.cloud.databricks.com/?o=7474656324919715
